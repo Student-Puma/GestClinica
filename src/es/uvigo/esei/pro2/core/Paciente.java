@@ -12,7 +12,7 @@ public abstract class Paciente extends Persona {
     protected String numHistorial; // Código de la historia médica
     protected Fecha fechaNac;    // Año de nacimiento del paciente
     
-    public Paciente(String nombre, String domicilio, String numHistorial, Fecha fechaNac)
+    public Paciente(String numHistorial, String nombre, String domicilio, Fecha fechaNac)
     {
         super(nombre,domicilio);
         this.numHistorial = numHistorial;
@@ -38,7 +38,7 @@ public abstract class Paciente extends Persona {
     @Override
     public String toString() {
         StringBuilder toret = new StringBuilder();
-        toret.append(this.numHistorial).append(" ; ").append(super.toString()).append(" ; ").append(this.fechaNac.toString());
+        toret.append(this.numHistorial).append(": ").append(super.toString()).append(", ").append(this.fechaNac.toString()).append(" - ");
         return toret.toString();
     }
 }

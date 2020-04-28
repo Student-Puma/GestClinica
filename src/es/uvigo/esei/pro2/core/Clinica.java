@@ -9,6 +9,7 @@ package es.uvigo.esei.pro2.core;
  * @author Suraei
  */
 public class Clinica {
+    private String nombreClinica;
     private Paciente[] pacientes;
     private int numPacientes;
     private Medico[] medicos;
@@ -21,69 +22,71 @@ public class Clinica {
      * @param maxMedicos
      * @param maxCitas
      */
-    public Clinica(int maxPacientes, int maxMedicos, int maxCitas)
+    public Clinica(String nombre, int maxPacientes, int maxMedicos, int maxCitas)
     {
+        this.nombreClinica = nombre;
         numPacientes = 0;
         pacientes = new Paciente[ maxPacientes  ];
+        
         numMedicos = 0;
         medicos = new Medico[maxMedicos];
+        
         numCitas = 0;
-        citamedica = new citaMedica[maxCitas];
+        citamedica = new CitaMedica[maxCitas];
         
     }
 
-    /**
-     * Devuelve el paciente situado en pos
-     * @param pos el lugar del paciente en el vector de pacientes
-     * @return el objeto Paciente correspondiente.
-     */
+    public String getNombreClinica() {
+        return nombreClinica;
+    }
+
+    public void setNombreClinica(String nombreClinica) {
+        this.nombreClinica = nombreClinica;
+    }
+    
+   
+
+  //PACIENTES
     public Paciente get(int pos) throws Exception
     {
         if ( pos >= getNumPacientes() ) {
              throw new Exception ("get(): sobrepasa la pos: " + ( pos + 1 ) + " / " + getMaxPacientes() );
         
-            //System.err.println( "get(): sobrepasa la pos: " + ( pos + 1 ) + " / " + getMaxPacientes() );
-            //System.exit( -1 );
         }
 
         return pacientes[ pos ];
     }
 
-    /** Devuelve el num. de pacientes creados.
-     * @return el num. de pacientes existentes, como entero.
-     */
+
+    
     public int getNumPacientes()
     {
         return numPacientes;
     }
 
-    /** Devuelve el max. de numPacientes
-     * @return el num. de pacientes max,, como entero
-     */
+
     public int getMaxPacientes()
     {
         return pacientes.length;
     }
 
-    /** Inserta un nuevo paciente
-     * @param p el nuevo objeto Paciente
-     */
     public void inserta(Paciente p) throws Exception
     {
         final int maxPacientes = getMaxPacientes();
 
         if ( getNumPacientes() >= maxPacientes ) {
              throw new Exception("inserta(): sobrepasa max.: " + getMaxPacientes() );
-//            System.err.println( "inserta(): sobrepasa max.: " + maxPacientes );
-//            System.exit( -1 );
         }
 
         pacientes[ numPacientes ] = p;
         ++numPacientes;
     }
    
-    public void elimina(int pos)
-    {        
+    public void elimina(int pos) throws Exception
+    {       
+        if (pos >= getNumPacientes()){
+            throw new Exception("get() : sobrepasa la pos: " + (pos + 1) + " / " + getMaxPacientes() );
+        }
         pacientes [ pos ] = pacientes [ --numPacientes ];
     }
     
@@ -92,6 +95,8 @@ public class Clinica {
         final int numPacientes = getNumPacientes();
 
         toret = new StringBuilder();
+        toret.append("Clinica: ").append(nombreClinica).append("\n");
+        toret.append("Pacientes: \n");
         if ( numPacientes > 0 ) {
             for (int i = 0; i < numPacientes; i++) {
                 toret.append (( i + 1 ) + ". " );
@@ -110,13 +115,13 @@ public class Clinica {
        
         switch (c) {
             case 'P':   for (int i = 0; i < numPac; i++) {
-                            if ( pacientes[i].getTipo() == Paciente.TipoSeguro.PRIVADO ){
+                            if ( pacientes[i] instanceof Privado){
                                 System.out.println(pacientes[i].toString());
                             }
                         }
                         break;
             case 'A':   for (int i = 0; i < numPac; i++) {
-                            if ( pacientes[i].getTipo() == Paciente.TipoSeguro.ASEGURADO ){
+                            if ( pacientes[i] instanceof Asegurado){
                                 System.out.println(pacientes[i].toString());
                             }
                         }
@@ -126,3 +131,9 @@ public class Clinica {
     }      
     
 }
+
+//MEDICOS
+
+
+
+//CITAS

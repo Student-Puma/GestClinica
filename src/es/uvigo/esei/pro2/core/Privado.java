@@ -12,9 +12,9 @@ package es.uvigo.esei.pro2.core;
 public class Privado extends Paciente {
     
     private String dni;
-    
-    public Privado(String nombre, String domicilio, String numHistorial, Fecha fecha, String dni) {
-        super(nombre, domicilio, numHistorial, fecha);
+
+    public Privado(String dni, String numHistorial, String nombre, String domicilio, Fecha fechaNac) {
+        super(numHistorial, nombre, domicilio, fechaNac);
         this.dni = dni;
     }
 
@@ -25,11 +25,13 @@ public class Privado extends Paciente {
     public void setDni(String dni) {
         this.dni = dni;
     }
+
+    
     
     @Override
     public String toString() {
         StringBuilder toret = new StringBuilder();
-        toret.append(super.toString()).append(" ; Privado");
+        toret.append(super.toString()).append("Privado:").append(dni);
         return toret.toString();
     }
 }

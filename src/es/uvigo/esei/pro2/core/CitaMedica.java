@@ -12,10 +12,14 @@ package es.uvigo.esei.pro2.core;
 public class CitaMedica {
     private Hora hora;
     private Fecha fecha;
+    private Medico medico;
+    private Paciente paciente;
     
-    public CitaMedica(int dia, int mes, int año, int hora, int minutos){
-        this.hora = new Hora(hora, minutos);
-        this.fecha = new Fecha(dia, mes, año);
+    public CitaMedica(Hora hora, Fecha fecha, Medico medico, Paciente paciente){
+       this.hora = hora;
+       this.fecha = fecha;
+       this.medico = medico;
+       this.paciente = paciente;
     }
 
     public Hora getHora() {
@@ -33,11 +37,34 @@ public class CitaMedica {
     public void setFecha(Fecha fecha) {
         this.fecha = fecha;
     }
+
+    public Medico getMedico() {
+        return medico;
+    }
+
+    public void setMedico(Medico medico) {
+        this.medico = medico;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+    }
+
+  
     
     @Override
     public String toString() {
         StringBuilder toret = new StringBuilder();
-        toret.append(this.hora.toString()).append(" ").append(this.fecha.toString());
+        toret.append("Cita:\n");
+        toret.append(fecha.toString()).append(" - ").append(hora.toString()).append("\n");
+        toret.append("Médico: ").append(medico.toString());
+        toret.append("\n");
+        toret.append("Pacienteaciente: ").append(paciente.toString());
+        
         return toret.toString();
     }
 }
