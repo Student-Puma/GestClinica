@@ -9,166 +9,199 @@ package es.uvigo.esei.pro2.core;
  */
 public class Clinica {
 
-    private String nombreClinica;
-    private Paciente[] pacientes;
+    // ==============================================
+    //  ATRIBUTOS
+    // ==============================================
+    private String nombre;
+
     private int numPacientes;
-    private Medico[] medicos;
+    private final Paciente[] pacientes;
+
     private int numMedicos;
-    private CitaMedica[] citamedica;
+    private final Medico[] medicos;
+
     private int numCitas;
+    private final CitaMedica[] citamedica;
+    private final Object[][] relacionCitaMedicoPaciente;
 
-    /**
-     * Nueva Clinica con un num. max. de pacientes.
-     *
-     * @param maxPacientes el num. max. de pacientes, como entero.
-     * @param maxMedicos
-     * @param maxCitas
-     */
+    // ==============================================
+    //  CONSTRUCTOR
+    // ==============================================
     public Clinica(String nombre, int maxPacientes, int maxMedicos, int maxCitas) {
-        this.nombreClinica = nombre;
-        numPacientes = 0;
-        pacientes = new Paciente[maxPacientes];
+        this.nombre = nombre;
 
-        numMedicos = 0;
-        medicos = new Medico[maxMedicos];
+        this.numPacientes = 0;
+        this.pacientes = new Paciente[maxPacientes];
 
-        numCitas = 0;
-        citamedica = new CitaMedica[maxCitas];
+        this.numMedicos = 0;
+        this.medicos = new Medico[maxMedicos];
 
+        this.numCitas = 0;
+        this.citamedica = new CitaMedica[maxCitas];
+        this.relacionCitaMedicoPaciente = new Object[maxCitas][3];
     }
 
-    public String getNombreClinica() {
-        return nombreClinica;
+    // ==============================================
+    //  CLINICA
+    // ==============================================
+    public String getNombre() {
+        return this.nombre;
     }
 
-    public void setNombreClinica(String nombreClinica) {
-        this.nombreClinica = nombreClinica;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    //PACIENTES
-    public Paciente getPaciente(int pos) throws Exception {
-        if (pos >= getNumPacientes()) {
-            throw new Exception("get(): sobrepasa la pos: " + (pos + 1) + " / " + getMaxPacientes());
-
-        }
-
-        return pacientes[pos];
-    }
-
+    // ==============================================
+    //  PACIENTES
+    // ==============================================
     public int getNumPacientes() {
-        return numPacientes;
+        return this.numPacientes;
     }
 
     public int getMaxPacientes() {
-        return pacientes.length;
+        return this.pacientes.length;
     }
 
-    public void insertaPaciente(Paciente p) throws Exception {
-        final int maxPacientes = getMaxPacientes();
-
-        if (getNumPacientes() >= maxPacientes) {
-            throw new Exception("inserta(): sobrepasa max.: " + getMaxPacientes());
+    public void insertarPaciente(Paciente p) throws ClinicaException {
+        if (this.numPacientes >= this.pacientes.length) {
+            throw new ClinicaException("Paciente :: insertar(): Sobrepasa el máximo (" + this.pacientes.length + ")");
         }
-
-        pacientes[numPacientes] = p;
-        ++numPacientes;
+        this.pacientes[this.numPacientes++] = p;
     }
 
-    public void eliminaPaciente(int pos) throws Exception {
-        if (pos >= getNumPacientes()) {
-            throw new Exception("get() : sobrepasa la pos: " + (pos + 1) + " / " + getMaxPacientes());
+    public Paciente getPaciente(int index) throws ClinicaException {
+        if (index < 0 || index >= this.pacientes.length) {
+            throw new ClinicaException("Paciente :: get() : Error en la posición (" + (index + 1) + "/" + this.pacientes.length + ")");
         }
-
-        if (tienePacienteCitas(getPaciente(pos))) {
-            throw new Exception("elimina(): no se puede eliminar el paciente, tiene citas");
-        }
-        pacientes[pos] = pacientes[--numPacientes];
+        return pacientes[index];
     }
 
-    private boolean tienePacienteCitas(Paciente p) {
+    public Paciente getPaciente(String numHistorial) throws ClinicaException {
         int i = 0;
-        while (i < this.getNumCitas() && !citamedica[i].getPaciente().equals(p)) {
-            i++;
-        }
-        return (i != this.getNumCitas());
-    }
-
-    public String toStringPaciente() {
-        StringBuilder toret;
-        final int numPacientes = getNumPacientes();
-
-        toret = new StringBuilder();
-        toret.append("Clinica: ").append(nombreClinica).append("\n");
-        toret.append("Pacientes: \n");
-        if (numPacientes > 0) {
-            for (int i = 0; i < numPacientes; i++) {
-                toret.append((i + 1) + ". ");
-                toret.append(pacientes[i].toString() + "\n");
-            }
-        } else {
-            toret.append("No hay pacientes.");
-        }
-
-        return toret.toString();
-    }
-
-    public void listarPacientes(char c) {
-        int numPac = getNumPacientes();
-
-        switch (c) {
-            case 'P':
-                for (int i = 0; i < numPac; i++) {
-                    if (pacientes[i] instanceof Privado) {
-                        System.out.println(pacientes[i].toString());
-                    }
-                }
-                break;
-            case 'A':
-                for (int i = 0; i < numPac; i++) {
-                    if (pacientes[i] instanceof Asegurado) {
-                        System.out.println(pacientes[i].toString());
-                    }
-                }
-                break;
-        }
-    }
-
-    public Paciente getPaciente(String numHistorial) throws Exception {
-        int i = 0;
-        while (i < this.numPacientes && !pacientes[i].getNumHistorial().equals(numHistorial)) {
+        while (i < this.numPacientes && !this.pacientes[i].getNumHistorial().equals(numHistorial)) {
             i++;
         }
         if (i == this.numPacientes) {
-            throw new Exception("getMedico(): El colegiado buscado no se corresponde con un médico");
+            throw new ClinicaException("Paciente :: get(): No existe el número de historial " + numHistorial);
         }
-        return pacientes[i];
+        return this.pacientes[i];
     }
 
     public boolean existeHistorial(String numHistorial) {
         int i = 0;
-        while (i < this.numPacientes && !pacientes[i].getNumHistorial().equals(numHistorial)) {
+        while (i < this.numPacientes && !this.pacientes[i].getNumHistorial().equals(numHistorial)) {
             i++;
         }
-        return (i != this.numPacientes);
+        return i != this.numPacientes;
     }
 
-//MEDICOS
-    public Medico getMedico(int pos) throws Exception {
-        if (pos >= getNumPacientes()) {
-            throw new Exception("get(): sobrepasa la pos: " + (pos + 1) + " / " + getMaxMedicos());
+    public void eliminarPaciente(int index) throws ClinicaException {
+        if (index < 0 || index >= this.pacientes.length) {
+            throw new ClinicaException("Paciente :: eliminar() : Error en la posición (" + (index + 1) + "/" + this.pacientes.length + ")");
+        }
+        if (tienePacienteCitas(this.getPaciente(index))) {
+            throw new ClinicaException("Paciente :: eliminar() : El paciente tiene citas pendientes");
+        }
+        this.pacientes[index] = this.pacientes[--this.numPacientes];
+    }
 
+    private boolean tienePacienteCitas(Paciente p) {
+        int i = 0;
+        while (i < this.numCitas && !this.relacionCitaMedicoPaciente[i][2].equals(p)) {
+            i++;
+        }
+        return i != this.numCitas;
+    }
+
+    public String toStringPacientes() {
+        StringBuilder sb = new StringBuilder();
+        if (this.numPacientes < 0) {
+            sb.append("No hay pacientes");
+        } else {
+            for (int i = 0; i < this.numPacientes; i++) {
+                sb.append(i + 1)
+                        .append(". ")
+                        .append(this.pacientes[i])
+                        .append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    public String toStringPacientes(char tipo) {
+        int index = 0;
+        StringBuilder sb = new StringBuilder();
+
+        switch (tipo) {
+            case 'P':
+                for (int i = 0; i < this.numPacientes; i++) {
+                    if (pacientes[i] instanceof Privado) {
+                        sb.append(++index)
+                                .append(". ")
+                                .append(pacientes[i])
+                                .append('\n');
+                    }
+                }
+                break;
+            case 'A':
+                for (int i = 0; i < this.numPacientes; i++) {
+                    if (pacientes[i] instanceof Asegurado) {
+                        sb.append(++index)
+                                .append(". ")
+                                .append(pacientes[i])
+                                .append('\n');
+                    }
+                }
+                break;
         }
 
-        return medicos[pos];
+        if (sb.length() == 0) {
+            sb.append("No hay pacientes de tipo especificado");
+        }
+
+        return sb.toString();
     }
 
+    // ==============================================
+    //  MÉDICOS
+    // ==============================================
     public int getNumMedicos() {
-        return numPacientes;
+        return this.numMedicos;
     }
 
     public int getMaxMedicos() {
-        return pacientes.length;
+        return this.medicos.length;
     }
+
+    public void insertarMedico(Medico m) throws ClinicaException {
+        if (this.numMedicos >= this.medicos.length) {
+            throw new ClinicaException("Medico :: insertar(): Sobrepasa el máximo (" + this.medicos.length + ")");
+        }
+        this.medicos[this.numMedicos++] = m;
+    }
+
+    public Medico getMedico(int index) throws ClinicaException {
+        if (index < 0 || index >= this.medicos.length) {
+            throw new ClinicaException("Medico :: get() : Error en la posición (" + (index + 1) + "/" + this.medicos.length + ")");
+        }
+        return medicos[index];
+    }
+
+    public Medico getMedico(String numColegiado) throws ClinicaException {
+        int i = 0;
+        while (i < this.numMedicos && !this.medicos[i].getNumColegiado().equals(numColegiado)) {
+            i++;
+        }
+        if (i == this.numMedicos) {
+            throw new ClinicaException("Medico :: get(): No existe el número de colegiado " + numColegiado);
+        }
+        return this.medicos[i];
+    }
+}
+
+/*
+//MEDICOS
 
     public Medico getMedico(String numColegiado) throws Exception {
         int i = 0;
@@ -241,9 +274,9 @@ public class Clinica {
     public void listarMedicos(char c) {
         int numM = getNumMedicos();
         for (int i = 0; i < numM; i++) {
-            
-                System.out.println(medicos[i].toString());
-            
+
+            System.out.println(medicos[i].toString());
+
         }
     }
 
@@ -301,19 +334,18 @@ public class Clinica {
 
         return toret.toString();
     }
-    
-        public void listarCitas(char c) {
+
+    public void listarCitas(char c) {
         int numC = getNumCitas();
         for (int i = 0; i < numC; i++) {
-            
-                System.out.println(citamedica[i].toString());
-            
+
+            System.out.println(citamedica[i].toString());
+
         }
     }
 
-
 }
 
-
+ */
 
 //CITAS
