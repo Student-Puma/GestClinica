@@ -181,7 +181,7 @@ public class Clinica {
         return medicos[i];
     }
 
-    public void inserta(Medico p) throws Exception {
+    public void insertaMedico(Medico p) throws Exception {
         final int maxMedicos = getMaxMedicos();
 
         if (getNumPacientes() >= maxMedicos) {
@@ -265,7 +265,7 @@ public class Clinica {
         return citamedica.length;
     }
 
-    public void inserta(CitaMedica p) throws Exception {
+    public void insertaCita(CitaMedica p) throws Exception {
         final int maxCitas = getMaxCitas();
 
         if (getNumPacientes() >= maxCitas) {
