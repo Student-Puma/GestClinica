@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uvigo.esei.pro2.core;
 
 /**
@@ -29,11 +24,7 @@ public class Medico extends Persona {
     @Override
     public String toString(){
         StringBuilder toret = new StringBuilder();
-        
-        toret.append(getNombre()).append(" ; ");
-        toret.append(getDomicilio()).append(" ; ");
-        toret.append(getNumColegiado());
-        
+        toret.append(this.nombre).append(" ; ").append(this.domicilio).append(" ; ").append(this.numColegiado);
         return toret.toString();
     }
 }

@@ -38,7 +38,7 @@ public abstract class Persona {
     @Override
     public String toString() {
         StringBuilder toret = new StringBuilder();
-        toret.append(nombre).append(", ").append(domicilio);
+        toret.append(nombre).append(" ; ").append(domicilio);
         return toret.toString();
     }
 }
