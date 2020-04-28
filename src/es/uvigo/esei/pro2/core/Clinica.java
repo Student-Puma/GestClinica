@@ -11,14 +11,25 @@ package es.uvigo.esei.pro2.core;
 public class Clinica {
     private Paciente[] pacientes;
     private int numPacientes;
+    private Medico[] medicos;
+    private int numMedicos;
+    private CitaMedica[] citamedica;
+    private int numCitas;
 
     /** Nueva Clinica con un num. max. de pacientes.
      * @param maxPacientes el num. max. de pacientes, como entero.
+     * @param maxMedicos
+     * @param maxCitas
      */
-    public Clinica(int maxPacientes)
+    public Clinica(int maxPacientes, int maxMedicos, int maxCitas)
     {
         numPacientes = 0;
         pacientes = new Paciente[ maxPacientes  ];
+        numMedicos = 0;
+        medicos = new Medico[maxMedicos];
+        numCitas = 0;
+        citamedica = new citaMedica[maxCitas];
+        
     }
 
     /**
