@@ -44,7 +44,11 @@ public class Fecha {
     @Override
     public String toString(){
         StringBuilder toret = new StringBuilder();
-        toret.append(this.dia).append("/").append(this.mes).append("/").append(this.año);
+        toret.append(String.format("%02d", this.dia))
+                .append("/")
+                .append(String.format("%02d", this.mes))
+                .append("/")
+                .append(this.año);
         return toret.toString();
     }
 }

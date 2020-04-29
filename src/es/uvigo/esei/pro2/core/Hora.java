@@ -32,7 +32,9 @@ public class Hora {
     @Override
     public String toString(){
         StringBuilder toret = new StringBuilder();
-        toret.append(this.hora).append(":").append(this.minutos);
+        toret.append(String.format("%02d", this.hora))
+                .append(":")
+                .append(String.format("%02d", this.minutos));
         return toret.toString();
     }
 }
