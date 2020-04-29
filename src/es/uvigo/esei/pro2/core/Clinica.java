@@ -20,8 +20,8 @@ public class Clinica {
     private int numMedicos;
     private final Medico[] medicos;
 
-    private int numCitas;
-    private final CitaMedica[] citamedica;
+    private int numCitasMedicas;
+    private final CitaMedica[] citasMedicas;
     private final Object[][] relacionCitaMedicoPaciente;
 
     // ==============================================
@@ -36,8 +36,8 @@ public class Clinica {
         this.numMedicos = 0;
         this.medicos = new Medico[maxMedicos];
 
-        this.numCitas = 0;
-        this.citamedica = new CitaMedica[maxCitas];
+        this.numCitasMedicas = 0;
+        this.citasMedicas = new CitaMedica[maxCitas];
         this.relacionCitaMedicoPaciente = new Object[maxCitas][3];
     }
 
@@ -97,8 +97,8 @@ public class Clinica {
     }
 
     public void eliminarPaciente(int index) throws ClinicaException {
-        if (index < 0 || index >= this.pacientes.length) {
-            throw new ClinicaException("Paciente :: eliminar() : Error en la posición (" + (index + 1) + "/" + this.pacientes.length + ")");
+        if (index < 0 || index >= this.numPacientes) {
+            throw new ClinicaException("Paciente :: eliminar() : Error en la posición (" + (index + 1) + "/" + this.numPacientes + ")");
         }
         if (tienePacienteCitas(this.getPaciente(index))) {
             throw new ClinicaException("Paciente :: eliminar() : El paciente tiene citas pendientes");
@@ -108,10 +108,10 @@ public class Clinica {
 
     private boolean tienePacienteCitas(Paciente p) {
         int i = 0;
-        while (i < this.numCitas && !this.relacionCitaMedicoPaciente[i][2].equals(p)) {
+        while (i < this.numCitasMedicas && !this.relacionCitaMedicoPaciente[i][2].equals(p)) {
             i++;
         }
-        return i != this.numCitas;
+        return i != this.numCitasMedicas;
     }
 
     public String toStringPacientes() {
@@ -198,7 +198,7 @@ public class Clinica {
         }
         return this.medicos[i];
     }
-    
+
     public boolean existeNumColegiado(String numColegiado) {
         int i = 0;
         while (i < this.numMedicos && !this.medicos[i].getNumColegiado().equals(numColegiado)) {
@@ -206,25 +206,25 @@ public class Clinica {
         }
         return i != this.numMedicos;
     }
-    
+
     public void eliminarMedico(int index) throws ClinicaException {
-        if (index < 0 || index >= this.medicos.length) {
-            throw new ClinicaException("Medico :: eliminar() : Error en la posición (" + (index + 1) + "/" + this.medicos.length + ")");
+        if (index < 0 || index >= this.numMedicos) {
+            throw new ClinicaException("Medico :: eliminar() : Error en la posición (" + (index + 1) + "/" + this.numMedicos + ")");
         }
         if (this.tieneMedicoCitas(this.getMedico(index))) {
             throw new ClinicaException("Medico :: eliminar() : El medico tiene citas pendientes");
         }
         this.medicos[index] = this.medicos[--this.numMedicos];
     }
-    
+
     private boolean tieneMedicoCitas(Medico m) {
         int i = 0;
-        while (i < this.numCitas && !this.relacionCitaMedicoPaciente[i][1].equals(m)) {
+        while (i < this.numCitasMedicas && !this.relacionCitaMedicoPaciente[i][1].equals(m)) {
             i++;
         }
-        return i != this.numCitas;
+        return i != this.numCitasMedicas;
     }
-    
+
     public String toStringMedicos() {
         StringBuilder sb = new StringBuilder();
         if (this.numMedicos < 0) {
@@ -239,75 +239,84 @@ public class Clinica {
         }
         return sb.toString();
     }
-}
 
-/*
-    //CITAS
-    public CitaMedica getCitaMedica(int pos) throws Exception {
-        if (pos >= getNumPacientes()) {
-            throw new Exception("get(): sobrepasa la pos: " + (pos + 1) + " / " + getMaxCitas());
-
-        }
-
-        return citamedica[pos];
-    }
-
+    // ==============================================
+    //  CITAS
+    // ==============================================
     public int getNumCitas() {
-        return numCitas;
+        return this.numCitasMedicas;
     }
 
     public int getMaxCitas() {
-        return citamedica.length;
+        return this.citasMedicas.length;
     }
 
-    public void insertaCita(CitaMedica p) throws Exception {
-        final int maxCitas = getMaxCitas();
+    public void insertarCitaMedica(CitaMedica cm, Medico m, Paciente p) throws ClinicaException {
+        if (this.numCitasMedicas >= this.citasMedicas.length) {
+            throw new ClinicaException("Cita Médica :: insertar(): Sobrepasa el máximo (" + this.citasMedicas.length + ")");
+        }
+        this.citasMedicas[this.numCitasMedicas] = cm;
+        // Añadimos la relacion Cita - Medico - Paciente
+        this.relacionCitaMedicoPaciente[this.numCitasMedicas++][0] = cm;    // Cita
+        this.relacionCitaMedicoPaciente[this.numCitasMedicas++][1] = m;     // Medico
+        this.relacionCitaMedicoPaciente[this.numCitasMedicas++][2] = p;     // Paciente
+    }
 
-        if (getNumPacientes() >= maxCitas) {
-            throw new Exception("inserta(): sobrepasa max.: " + getMaxCitas());
+    public CitaMedica getCitaMedica(int index) throws ClinicaException {
+        if (index < 0 || index >= this.citasMedicas.length) {
+            throw new ClinicaException("Cita Médica :: get() : Error en la posición (" + (index + 1) + "/" + this.citasMedicas.length + ")");
+        }
+        return this.citasMedicas[index];
+    }
+
+    public Object[] getCitaMedicaDetallada(int index) throws ClinicaException {
+        if (index < 0 || index >= this.citasMedicas.length) {
+            throw new ClinicaException("Cita Médica :: get() : Error en la posición (" + (index + 1) + "/" + this.citasMedicas.length + ")");
+        }
+        return this.relacionCitaMedicoPaciente[index];
+    }
+
+    public void eliminarCitaMedica(int index) throws ClinicaException {
+        if (index < 0 || index >= this.numCitasMedicas) {
+            throw new ClinicaException("Cita Médica :: eliminar() : Error en la posición (" + (index + 1) + "/" + this.numCitasMedicas + ")");
+        }
+        this.citasMedicas[index] = this.citasMedicas[--this.numCitasMedicas];
+        // Eliminamos la relacion Cita - Medico - Paciente
+        this.relacionCitaMedicoPaciente[index] = this.relacionCitaMedicoPaciente[this.numCitasMedicas];
+    }
+
+    public String toStringCitaMedicaDetallada(int index) throws ClinicaException {
+        if (index < 0 || index >= this.numCitasMedicas) {
+            throw new ClinicaException("Cita Médica :: toString() : Error en la posición (" + (index + 1) + "/" + this.numCitasMedicas + ")");
         }
 
-        citamedica[numCitas] = p;
-        ++numCitas;
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(this.relacionCitaMedicoPaciente[index][0])
+                .append(" ; ")
+                .append(this.relacionCitaMedicoPaciente[index][1])
+                .append(" ; ")
+                .append(this.relacionCitaMedicoPaciente[index][2]);
+
+        return sb.toString();
     }
 
-    public void eliminaCita(int pos) throws Exception {
-        if (pos >= getNumCitas()) {
-            throw new Exception("get() : sobrepasa la pos: " + (pos + 1) + " / " + getMaxCitas());
-        }
-        citamedica[pos] = citamedica[--numCitas];
-    }
-
-    public String toStringCita() {
-        StringBuilder toret;
-        final int numCitas = getNumCitas();
-
-        toret = new StringBuilder();
-        toret.append("Clinica: ").append(nombreClinica).append("\n");
-        toret.append("Citas: \n");
-        if (numCitas > 0) {
-            for (int i = 0; i < numCitas; i++) {
-                toret.append((i + 1) + ". ");
-                toret.append(citamedica[i].toString() + "\n");
-            }
+    public String toStringCitasMedicas() {
+        StringBuilder sb = new StringBuilder();
+        if (this.numCitasMedicas < 0) {
+            sb.append("No hay citas médicas");
         } else {
-            toret.append("No hay citas.");
+            for (int i = 0; i < this.numCitasMedicas; i++) {
+                sb.append(i + 1)
+                        .append(". ")
+                        .append(this.relacionCitaMedicoPaciente[i][0])
+                        .append(" ; ")
+                        .append(this.relacionCitaMedicoPaciente[i][1])
+                        .append(" ; ")
+                        .append(this.relacionCitaMedicoPaciente[i][2])
+                        .append('\n');
+            }
         }
-
-        return toret.toString();
+        return sb.toString();
     }
-
-    public void listarCitas(char c) {
-        int numC = getNumCitas();
-        for (int i = 0; i < numC; i++) {
-
-            System.out.println(citamedica[i].toString());
-
-        }
-    }
-
 }
-
- */
-
-//CITAS
