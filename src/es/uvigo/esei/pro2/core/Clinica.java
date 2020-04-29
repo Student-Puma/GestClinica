@@ -116,7 +116,7 @@ public class Clinica {
 
     public String toStringPacientes() {
         StringBuilder sb = new StringBuilder();
-        if (this.numPacientes < 0) {
+        if (this.numPacientes == 0) {
             sb.append("No hay pacientes");
         } else {
             for (int i = 0; i < this.numPacientes; i++) {
@@ -243,11 +243,11 @@ public class Clinica {
     // ==============================================
     //  CITAS
     // ==============================================
-    public int getNumCitas() {
+    public int getNumCitasMedicas() {
         return this.numCitasMedicas;
     }
 
-    public int getMaxCitas() {
+    public int getMaxCitasMedicas() {
         return this.citasMedicas.length;
     }
 

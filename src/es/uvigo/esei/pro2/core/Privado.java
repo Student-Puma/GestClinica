@@ -24,7 +24,7 @@ public class Privado extends Paciente {
     @Override
     public String toString() {
         StringBuilder toret = new StringBuilder();
-        toret.append(super.toString()).append(" ; Privado ; ").append(dni);
+        toret.append(super.toString()).append("Privado ; ").append(dni);
         return toret.toString();
     }
 }

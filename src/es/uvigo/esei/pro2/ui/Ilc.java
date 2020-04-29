@@ -1,10 +1,7 @@
 package es.uvigo.esei.pro2.ui;
 
-import es.uvigo.esei.pro2.core.Clinica;
-import es.uvigo.esei.pro2.core.*;
-import es.uvigo.esei.pro2.core.Paciente;
-
 import java.util.Scanner;
+import es.uvigo.esei.pro2.core.*;
 
 /**
  * Interfaz de lin. de comando
@@ -15,225 +12,401 @@ public class Ilc {
      * Realiza el reparto de la funcionalidad ler = lee, evalua, repite
      */
     public void ler() {
-        int op;
-
+        // --- Configuración
         System.out.println("Configuracion de la clínica");
-        String nombre = leeCadena("Nombre de la clinica");
-        int maxPacientes = leeNum("Num. max. pacientes: ");
-        int maxMedicos = leeNum("Num. max. medicos: ");
-        int maxCitas = leeNum("Num. max. citas: ");
+        String nombre = this.leeCadena("Nombre de la clinica");
+        int maxPacientes = this.leeNum("Num. max. pacientes");
+        int maxMedicos = this.leeNum("Num. max. medicos");
+        int maxCitas = this.leeNum("Num. max. citas");
 
-        // Prepara
-        Clinica coleccion = new Clinica(nombre, maxPacientes, maxMedicos, maxCitas);
+        // -- Preparación
+        Clinica clinica = new Clinica(nombre, maxPacientes, maxMedicos, maxCitas);
 
-        // Bucle ppal
+        // --- Menú
+        int op;
         do {
-            System.out.println("--- Gestión de la clínica " + coleccion.getNombreClinica() + " ---");
-
-            op = menuPrincipal(coleccion);
+            op = this.menuPrincipal(clinica);
             try {
                 switch (op) {
-
                     case 1:
-                        opcionesPacientes(coleccion);
+                        this.opcionesPacientes(clinica);
                         break;
                     case 2:
-                        opcionesMedicos(coleccion);
+                        this.opcionesMedicos(clinica);
                         break;
                     case 3:
-                        opcionesCitas(coleccion);
+                        this.opcionesCitas(clinica);
                         break;
-
                 }
-            } catch (Exception e) {
-                System.err.println("\nERROR: " + e.getMessage());
+            } catch (Exception err) {
+                System.err.println("[!] ERROR { " + err.getMessage() + " }");
             }
         } while (op != 0);
-
+        System.out.println("-- Gracias por usar Gestión Clínica --");
     }
 
+    // ==============================================
+    //  MENÚS
+    // ==============================================
     private int menuPrincipal(Clinica c) {
         int toret;
-
         do {
-            System.out.println("\n-- Gestión de la clínica " + c.getNombreClinica() + " --");
+            System.out.println("\n-- Gestión de la clínica " + c.getNombre() + " --");
             System.out.println(
                     "\n1. Gestión pacientes\n"
                     + "2. Gestión médicos\n"
                     + "0. Salir\n");
-            toret = leeNum("Selecciona: ");
-        } while (toret < 0
-                && toret > 3);
-
+            toret = this.leeNum("> Selecciona la opción deseada");
+        } while (toret < 0 || toret > 3);
         System.out.println();
         return toret;
     }
 
-    private void opcionesPacientes(Clinica coleccion) throws Exception {
-        int op = -1;
-        do {
-            op = menuPacientes(coleccion);
-
-            try {
-                switch (op) {
-                    case 0:
-                        System.out.println("Volver al menu principal");
-                        break;
-                    case 1:
-                        insertaPaciente(coleccion);
-                        break;
-                    case 2:
-                        modificaPaciente(coleccion);
-                        break;
-                    case 3:
-                        eliminaPaciente(coleccion);
-                        break;
-                    case 4:
-                        //visualiza( coleccion );
-                        System.out.println(coleccion.toStringPaciente());
-                        break;
-
-                    default:
-                        System.out.println("No es correcta esa opción ( "
-                                + op + " )");
-                }
-            } catch (Exception e) {
-                System.err.println("\nERROR: " + e.getMessage());
-            }
-        } while (op != 0);
-    }
-
-    private int menuPacientes(Clinica coleccion) {
+    private int menuPacientes(Clinica c) {
         int toret;
-
         do {
             System.out.println("Número de pacientes: "
-                    + coleccion.getNumPacientes()
-                    + " / " + coleccion.getMaxPacientes());
+                    + c.getNumPacientes()
+                    + " / " + c.getMaxPacientes());
             System.out.println(
                     "\n1. Inserta un nuevo paciente\n"
                     + "2. Modifica un paciente\n"
                     + "3. Elimina un paciente\n"
-                    + "4. Listar pacientes\n"
-                    + "5. Listar pacientes por tipo\n"
+                    + "4. Listar todos los pacientes\n"
+                    + "5. Listar pacientes asegurados\n"
+                    + "6. Listar pacientes privados\n"
                     + "0. Salir\n");
-            toret = leeNum("Selecciona: ");
-        } while (toret < 0
-                && toret > 5);
-
+            toret = this.leeNum("> Selecciona la opción deseada");
+        } while (toret < 0 || toret > 6);
         System.out.println();
         return toret;
     }
 
-    private void opcionesMedicos(Clinica coleccion) throws Exception {
-        int op = -1;
-        do {
-            op = menuMedicos(coleccion);
-
-            try {
-                switch (op) {
-                    case 0:
-                        System.out.println("Volver al menu principal");
-                        break;
-                    case 1:
-                        insertaMedico(coleccion);
-                        break;
-                    case 2:
-                        modificaMedico(coleccion);
-                        break;
-                    case 3:
-                        eliminaMedico(coleccion);
-                        break;
-                    case 4:
-                        //visualiza( coleccion );
-                        System.out.println(coleccion.toStringMedico());
-                        break;
-
-                    default:
-                        System.out.println("No es correcta esa opción ( "
-                                + op + " )");
-                }
-            } catch (Exception e) {
-                System.err.println("\nERROR: " + e.getMessage());
-            }
-        } while (op != 0);
-    }
-
-    private int menuMedicos(Clinica coleccion) {
+    private int menuMedicos(Clinica clinica) {
         int toret;
 
         do {
-            System.out.println("Número de medicos: "
-                    + coleccion.getNumMedicos()
-                    + " / " + coleccion.getMaxMedicos());
+            System.out.println("Número de médicos: "
+                    + clinica.getNumMedicos()
+                    + " / " + clinica.getMaxMedicos());
             System.out.println(
-                    "\n1. Inserta un nuevo medico\n"
-                    + "2. Modifica un medico\n"
-                    + "3. Elimina un medico\n"
-                    + "4. Listar medicos\n"
+                    "\n1. Inserta un nuevo médico\n"
+                    + "2. Modifica un médico\n"
+                    + "3. Elimina un médico\n"
+                    + "4. Listar médicos\n"
                     + "0. Salir\n");
-            toret = leeNum("Selecciona: ");
-        } while (toret < 0
-                && toret > 4);
-
+            toret = this.leeNum("> Selecciona la opción deseada");
+        } while (toret < 0 || toret > 4);
         System.out.println();
         return toret;
     }
 
-    private void opcionesCitas(Clinica coleccion) throws Exception {
-        int op = -1;
+    private int menuCitas(Clinica clinica) {
+        int toret;
         do {
-            op = menuCitas(coleccion);
+            System.out.println("Número de citas médicas: "
+                    + clinica.getNumCitasMedicas()
+                    + " / " + clinica.getNumCitasMedicas());
+            System.out.println(
+                    "\n1. Inserta una nueva cita médica\n"
+                    + "2. Modifica una cita médica\n"
+                    + "3. Elimina una cita médica\n"
+                    + "4. Listar citas médicas\n"
+                    + "0. Salir\n");
+            toret = this.leeNum("> Selecciona la opción deseada");
+        } while (toret < 0 || toret > 4);
+        System.out.println();
+        return toret;
+    }
+
+    // ==============================================
+    //  OPCIONES
+    // ==============================================
+    private void opcionesPacientes(Clinica clinica) {
+        int op;
+        do {
+            op = this.menuPacientes(clinica);
 
             try {
                 switch (op) {
-                    case 0:
-                        System.out.println("Volver al menu principal");
-                        break;
                     case 1:
-                        insertaCita(coleccion);
+                        this.insertarPaciente(clinica);
                         break;
                     case 2:
-                        modificaCita(coleccion);
+                        if(clinica.getNumPacientes() == 0) {
+                            System.out.println("No hay pacientes");
+                        } else {
+                            int index;
+                            do {
+                                System.out.println("Pacientes:\n----------");
+                                System.out.println(clinica.toStringPacientes());
+                                index = leeNum("> Selecciona el paciente deseado");
+                            } while(index < 1 || index > clinica.getNumPacientes());
+                            this.modificarPaciente(clinica.getPaciente(index - 1));
+                        }
                         break;
                     case 3:
-                        eliminaCita(coleccion);
+                        if(clinica.getNumPacientes() == 0) {
+                            System.out.println("No hay pacientes");
+                        } else {
+                            int index;
+                            do {
+                                System.out.println("Pacientes:\n----------");
+                                System.out.println(clinica.toStringPacientes());
+                                index = leeNum("> Selecciona el paciente deseado");
+                            } while(index < 1 || index > clinica.getNumPacientes());
+                            clinica.eliminarPaciente(index - 1);
+                        }
                         break;
                     case 4:
-                        //visualiza( coleccion );
-                        System.out.println(coleccion.toStringCita());
+                        System.out.println(clinica.toStringPacientes());
                         break;
-
-                    default:
-                        System.out.println("No es correcta esa opción ( "
-                                + op + " )");
+                    case 5:
+                        System.out.println(clinica.toStringPacientes('A'));
+                        break;
+                    case 6:
+                        System.out.println(clinica.toStringPacientes('P'));
+                        break;
                 }
-            } catch (Exception e) {
-                System.err.println("\nERROR: " + e.getMessage());
+            } catch (ClinicaException err) {
+                System.err.println("[!] ERROR { " + err.getMessage() + " }");
             }
+
+            System.out.println();
         } while (op != 0);
     }
 
-    private int menuCitas(Clinica coleccion) {
-        int toret;
-
+    private void opcionesMedicos(Clinica clinica) {
+        int op;
         do {
-            System.out.println("Número de citas: "
-                    + coleccion.getNumMedicos()
-                    + " / " + coleccion.getMaxCitas());
-            System.out.println(
-                    "\n1. Inserta una nueva cita\n"
-                    + "2. Modifica una cita\n"
-                    + "3. Elimina una cita\n"
-                    + "4. Listar citas\n"
-                    + "0. Salir\n");
-            toret = leeNum("Selecciona: ");
-        } while (toret < 0
-                && toret > 4);
+            op = this.menuMedicos(clinica);
 
-        System.out.println();
-        return toret;
+            try {
+                switch (op) {
+                    case 1:
+                        // insertaMedico(clinica);
+                        break;
+                    case 2:
+                        // modificaMedico(clinica);
+                        break;
+                    case 3:
+                        // eliminaMedico(clinica);
+                        break;
+                    case 4:
+                        System.out.println(clinica.toStringMedicos());
+                        break;
+                }
+            } catch (Exception err) {//ClinicaException err) {
+                System.err.println("[!] ERROR { " + err.getMessage() + " }");
+            }
+            System.out.println();
+        } while (op != 0);
     }
+    
+    private void opcionesCitas(Clinica clinica) {
+        int op;
+        do {
+            op = menuCitas(clinica);
+
+            try {
+                switch (op) {
+                    case 1:
+                        insertaCita(clinica);
+                        break;
+                    case 2:
+                        modificaCita(clinica);
+                        break;
+                    case 3:
+                        eliminaCita(clinica);
+                        break;
+                    case 4:
+                        System.out.println(clinica.toStringCitasMedicas());
+                        break;
+                }
+            } catch (Exception err) {//ClinicaException err) {
+                System.err.println("[!] ERROR { " + err.getMessage() + " }");
+            }
+            System.out.println();
+        } while (op != 0);
+    }
+    
+    // ==============================================
+    //  PERSONAS
+    // ==============================================
+    private void modificarPersona(Persona p) {
+        String nombre = this.leeCadena("Apellidos, Nombre");
+        String domicilio = this.leeCadena("Domicilio");
+        
+        p.setNombre(nombre);
+        p.setDomicilio(domicilio);
+    }
+    
+    // ==============================================
+    //  PACIENTES
+    // ==============================================    
+    private void insertarPaciente(Clinica clinica) throws ClinicaException {
+        int tipo = this.leerTipoPaciente();
+        Paciente p = tipo == 1 ? 
+                    new Asegurado(null, null, null, null, null, null) :
+                    new Privado(null, null, null, null, null);
+        this.modificarPaciente(p);
+        clinica.insertarPaciente(p);
+    } 
+    
+    private void modificarPaciente(Paciente p) {
+        this.modificarPersona(p);
+        
+        String numHistorial = this.leeCadena("Num. Historial");
+        Fecha fechaNac = this.leerFecha("Fecha de Nacimiento");
+        
+        p.setNumHistorial(numHistorial);
+        p.setFechaNac(fechaNac);
+        
+        if(p instanceof Asegurado) {
+            String poliza = this.leeCadena("Póliza");
+            String compañia = this.leeCadena("Compañía aseguradora");
+        
+            ((Asegurado) p).setPoliza(poliza);
+            ((Asegurado) p).setCompañia(compañia);
+        } else {
+            String dni = this.leerDNI();
+        
+            ((Privado) p).setDni(dni);
+        }
+    }
+    
+    // ==============================================
+    //  ENTRADAS DE TECLADO (ESPECIALES)
+    // ==============================================
+    private int leerTipoPaciente() {
+        int tipo;
+        do {
+            tipo = this.leeNum("Introduce tipo de paciente:\n" +
+                    "1. Asegurado\n2. Privado\n\n" +
+                    "> Selecciona la opción deseada");
+        } while (tipo != 1 && tipo != 2);
+        return tipo;
+    }
+    
+    private Fecha leerFecha(String msg) {
+        System.out.println(msg + ":");
+        int a,m,d;
+        // Año
+        do {
+            a = leeNum("\tAño");
+        } while (a < 1900 || a > 2020);
+        // Mes
+        do {
+            m = leeNum("\tMes");
+        } while (m < 0 || m > 12);
+        // Día
+        int max;
+        switch (m) {
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                max = 31;
+                break;
+            case 2:
+                max = 29;
+                break;
+            default:
+                max = 30;
+        }
+        do {
+            d = leeNum("\tDia");
+        } while (d < 0 || d > max);
+
+        return new Fecha(d, m, a);
+    }
+    
+    private String leerDNI() {
+        String dni;
+        
+        do {
+            dni = this.leeCadena("DNI");
+        } while(dni.length() == 9);
+        
+        return dni;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * Lee un num. de teclado
@@ -242,16 +415,15 @@ public class Ilc {
      * @return El num., como entero
      */
     private int leeNum(String msg) {
-        boolean repite;
         int toret = 0;
+        boolean repite;
         Scanner teclado = new Scanner(System.in);
 
         do {
-            repite = false;
-            System.out.print(msg);
-
+            System.out.print(msg + ": ");
             try {
                 toret = Integer.parseInt(teclado.nextLine());
+                repite = toret < 0;
             } catch (NumberFormatException exc) {
                 repite = true;
             }
@@ -261,53 +433,11 @@ public class Ilc {
     }
 
     /**
-     * Presenta un menu con las opciones, y permite seleccionar una.
-     *
-     * @return la opcion seleccionada, como entero
-     */
-    private int menu(Clinica coleccion) {
-        int toret;
-
-        do {
-            System.out.println("Número de pacientes: "
-                    + coleccion.getNumPacientes()
-                    + " / " + coleccion.getMaxPacientes());
-            System.out.println(
-                    "\n1. Inserta un nuevo paciente\n"
-                    + "2. Modifica un paciente\n"
-                    + "3. Elimina un paciente\n"
-                    + "4. Listar pacientes\n"
-                    + "5. Listar pacientes por tipo\n"
-                    + "0. Salir\n");
-            toret = leeNum("Selecciona: ");
-        } while (toret < 0
-                && toret > 5);
-
-        System.out.println();
-        return toret;
-    }
-
-    /**
      * Crea un nuevo paciente y lo inserta en la coleccion
      *
      * @param coleccion La coleccion en la que se inserta el paciente.
      */
-    private void insertaPaciente(Clinica coleccion) throws Exception {
-        Paciente p;
-        p = new Asegurado("", "", "", "", "", new Fecha(0, 0, 0));
-
-        switch (leerTipoPaciente()) {
-            case 'P':
-                p = new Privado("", "", "", "", new Fecha(0, 0, 0));
-                break;
-            case 'A':
-                p = new Asegurado("", "", "", "", "", new Fecha(0, 0, 0));
-                break;
-
-        }
-        modificaPaciente(p);
-        coleccion.insertaPaciente(p);
-    }
+    
 
     private void insertaMedico(Clinica coleccion) throws Exception {
         Medico p;
@@ -329,18 +459,7 @@ public class Ilc {
 
     }
 
-    private void modificaPaciente(Paciente p) {
-
-        modificaPersona(p);
-        modificaPacienteComun(p);
-
-        if (p instanceof Privado) {
-            modificaPacientePrivado((Privado) p);
-        } else {
-            modificaPacienteAsegurado((Asegurado) p);
-        }
-
-    }
+    
 
     private void modificaMedico(Medico m) {
         String info;
@@ -375,54 +494,44 @@ public class Ilc {
             info = leeCadena(": ");
         } while (!coleccion.existeHistorial(info));
         cm.setPaciente(coleccion.getPaciente(info));
-        
+
         Fecha f;
         Hora h;
         System.out.println("Fecha\n");
-        if(cm.getFecha().getDia() != 0){
-        System.out.println("["+ cm.getFecha().toString() + "]");
-    }
+        if (cm.getFecha().getDia() != 0) {
+            System.out.println("[" + cm.getFecha().toString() + "]");
+        }
         f = leerFecha();
-        
-       System.out.println("Hora\n");
-        if(cm.getHora().getHora() != 0){
-        System.out.println("["+ cm.getHora().toString() + "]");
-    }
+
+        System.out.println("Hora\n");
+        if (cm.getHora().getHora() != 0) {
+            System.out.println("[" + cm.getHora().toString() + "]");
+        }
         h = leerHora();
         cm.setFecha(f);
         cm.setHora(h);
     }
-    
-    private Hora leerHora(){
-        int h=0;
-        int m=0;
-        do{
-            h= leeNum("\nHora:");
-        }while(h<0 ||h>24);
-         do{
-            h= leeNum("\nMinuto:");
-        }while(m<0 ||m>60);
-        
-        return new Hora(h,m);
-        }
-   
 
-    private char leerTipoPaciente() {
-        char tipoPac;
-        Scanner entrada = new Scanner(System.in);
-
+    private Hora leerHora() {
+        int h = 0;
+        int m = 0;
         do {
-            tipoPac = leeCadena("Introduce tipo de paciente ( A: Asegurado y P: Privado): ").toUpperCase().trim().charAt(0);
-        } while ((tipoPac != 'P') && (tipoPac != 'A'));
+            h = leeNum("\nHora:");
+        } while (h < 0 || h > 24);
+        do {
+            h = leeNum("\nMinuto:");
+        } while (m < 0 || m > 60);
 
-        return tipoPac;
+        return new Hora(h, m);
     }
+
+    
 
     private String leeCadena(String msg) {
         Scanner teclado = new Scanner(System.in);
         String toret = "";
         do {
-            System.out.print(msg);
+            System.out.print(msg + ": ");
             toret = teclado.nextLine().trim();
         } while (toret.equals(""));
         return toret;
@@ -481,47 +590,9 @@ public class Ilc {
         }
     }
 
-    private void modificaPersona(Persona p) {
-        String info;
-        Scanner teclado = new Scanner(System.in);
+    
 
-        System.out.println("Nombre del paciente: ");
-        if (p.getNombre().length() > 0) {
-            System.out.println("[" + p.getNombre() + "]");
-        }
-
-        info = leeCadena(": ");
-        p.setNombre(info);
-
-        System.out.println("Domicilio del paciente: ");
-        if (p.getDomicilio().length() > 0) {
-            System.out.println("[" + p.getDomicilio() + "]");
-        }
-
-        info = leeCadena(": ");
-        p.setDomicilio(info);
-    }
-
-    private void modificaPacienteComun(Paciente p) {
-        String info;
-        Scanner teclado = new Scanner(System.in);
-
-        System.out.print("Numero de historial del paciente");
-        if (p.getNumHistorial().length() > 0) {
-            System.out.println("[" + p.getNumHistorial() + "]");
-        }
-
-        info = leeCadena(": ");
-
-        p.setNumHistorial(info);
-
-        System.out.print("Fecha de nacimiento");
-        if (p.getFechaNac().getAño() != 0) {
-            System.out.println("[" + p.getFechaNac().toString() + "]");
-        }
-
-        p.setFechaNac(leerFecha());
-    }
+    
 
     private void modificaPacientePrivado(Privado p) {
         String info;
@@ -634,49 +705,8 @@ public class Ilc {
         }
 
     }*/
-    /**
-     * Lista las pacientes de la coleccion por el tipo de seguro
-     *
-     * @param coleccion La Clinica de la que se listan los pacientes.
-     */
-    private Fecha leerFecha() {
-        int a, m, d;
 
-        do {
-            a = leeNum("\n\tAño: ");
-
-        } while (a < 0);
-
-        do {
-            m = leeNum("\tMes: ");
-
-        } while (m < 0 || m > 12);
-
-        int max = -1;
-        switch (m) {
-            case 1:
-            case 3:
-            case 5:
-            case 7:
-            case 8:
-            case 10:
-            case 12:
-                max = 31;
-                break;
-            case 2:
-                max = 29;
-                break;
-            default:
-                max = 30;
-        }
-
-        do {
-            d = leeNum("\tDía: ");
-
-        } while (d < 0 || d > max);
-
-        return new Fecha(d, m, a);
-    }
+    
 
     public void listarPorTipo(Clinica coleccion) {
         char info;

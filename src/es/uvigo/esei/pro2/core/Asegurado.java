@@ -35,8 +35,8 @@ public class Asegurado extends Paciente {
     public String toString() {
         StringBuilder toret = new StringBuilder();
         toret.append(super.toString());
-        toret.append(" Asegurado: ");
-        toret.append(poliza).append(", ").append(compañia);
+        toret.append("Asegurado ; ");
+        toret.append(poliza).append(" ; ").append(compañia);
         return toret.toString();
     }
 
