@@ -133,28 +133,28 @@ public class Ilc {
                         this.insertarPaciente(clinica);
                         break;
                     case 2:
-                        if(clinica.getNumPacientes() == 0) {
+                        if (clinica.getNumPacientes() == 0) {
                             System.out.println("No hay pacientes");
                         } else {
                             int index;
                             do {
                                 System.out.println("Pacientes:\n----------");
                                 System.out.println(clinica.toStringPacientes());
-                                index = leeNum("> Selecciona el paciente deseado");
-                            } while(index < 1 || index > clinica.getNumPacientes());
+                                index = this.leeNum("> Selecciona el paciente deseado");
+                            } while (index < 1 || index > clinica.getNumPacientes());
                             this.modificarPaciente(clinica.getPaciente(index - 1));
                         }
                         break;
                     case 3:
-                        if(clinica.getNumPacientes() == 0) {
+                        if (clinica.getNumPacientes() == 0) {
                             System.out.println("No hay pacientes");
                         } else {
                             int index;
                             do {
                                 System.out.println("Pacientes:\n----------");
                                 System.out.println(clinica.toStringPacientes());
-                                index = leeNum("> Selecciona el paciente deseado");
-                            } while(index < 1 || index > clinica.getNumPacientes());
+                                index = this.leeNum("> Selecciona el paciente deseado");
+                            } while (index < 1 || index > clinica.getNumPacientes());
                             clinica.eliminarPaciente(index - 1);
                         }
                         break;
@@ -171,7 +171,6 @@ public class Ilc {
             } catch (ClinicaException err) {
                 System.err.println("[!] ERROR { " + err.getMessage() + " }");
             }
-
             System.out.println();
         } while (op != 0);
     }
@@ -184,25 +183,45 @@ public class Ilc {
             try {
                 switch (op) {
                     case 1:
-                        // insertaMedico(clinica);
+                        this.insertarMedico(clinica);
                         break;
                     case 2:
-                        // modificaMedico(clinica);
+                        if (clinica.getNumMedicos() == 0) {
+                            System.out.println("No hay médicos");
+                        } else {
+                            int index;
+                            do {
+                                System.out.println("Medicos:\n----------");
+                                System.out.println(clinica.toStringMedicos());
+                                index = this.leeNum("> Selecciona el médico deseado");
+                            } while (index < 1 || index > clinica.getNumMedicos());
+                            this.modificarMedico(clinica.getMedico(index - 1));
+                        }
                         break;
                     case 3:
-                        // eliminaMedico(clinica);
+                        if (clinica.getNumMedicos() == 0) {
+                            System.out.println("No hay médicos");
+                        } else {
+                            int index;
+                            do {
+                                System.out.println("Medicos:\n----------");
+                                System.out.println(clinica.toStringMedicos());
+                                index = this.leeNum("> Selecciona el médico deseado");
+                            } while (index < 1 || index > clinica.getNumMedicos());
+                            clinica.eliminarMedico(index - 1);
+                        }
                         break;
                     case 4:
                         System.out.println(clinica.toStringMedicos());
                         break;
                 }
-            } catch (Exception err) {//ClinicaException err) {
+            } catch (ClinicaException err) {//ClinicaException err) {
                 System.err.println("[!] ERROR { " + err.getMessage() + " }");
             }
             System.out.println();
         } while (op != 0);
     }
-    
+
     private void opcionesCitas(Clinica clinica) {
         int op;
         do {
@@ -229,68 +248,80 @@ public class Ilc {
             System.out.println();
         } while (op != 0);
     }
-    
+
     // ==============================================
     //  PERSONAS
     // ==============================================
     private void modificarPersona(Persona p) {
         String nombre = this.leeCadena("Apellidos, Nombre");
-        String domicilio = this.leeCadena("Domicilio");
-        
         p.setNombre(nombre);
+        String domicilio = this.leeCadena("Domicilio");
         p.setDomicilio(domicilio);
     }
-    
+
     // ==============================================
     //  PACIENTES
     // ==============================================    
     private void insertarPaciente(Clinica clinica) throws ClinicaException {
         int tipo = this.leerTipoPaciente();
-        Paciente p = tipo == 1 ? 
-                    new Asegurado(null, null, null, null, null, null) :
-                    new Privado(null, null, null, null, null);
+        Paciente p = tipo == 1
+                ? new Asegurado(null, null, null, null, null, null)
+                : new Privado(null, null, null, null, null);
         this.modificarPaciente(p);
         clinica.insertarPaciente(p);
-    } 
-    
+    }
+
     private void modificarPaciente(Paciente p) {
         this.modificarPersona(p);
-        
+
         String numHistorial = this.leeCadena("Num. Historial");
-        Fecha fechaNac = this.leerFecha("Fecha de Nacimiento");
-        
         p.setNumHistorial(numHistorial);
+        Fecha fechaNac = this.leerFecha("Fecha de Nacimiento");
         p.setFechaNac(fechaNac);
-        
-        if(p instanceof Asegurado) {
+
+        if (p instanceof Asegurado) {
             String poliza = this.leeCadena("Póliza");
-            String compañia = this.leeCadena("Compañía aseguradora");
-        
             ((Asegurado) p).setPoliza(poliza);
+            String compañia = this.leeCadena("Compañía aseguradora");
             ((Asegurado) p).setCompañia(compañia);
         } else {
             String dni = this.leerDNI();
-        
             ((Privado) p).setDni(dni);
         }
     }
+
+    // ==============================================
+    //  MÉDICOS
+    // ============================================== 
+    private void insertarMedico(Clinica clinica) throws ClinicaException {
+        Medico m = new Medico(null, null, null);
+        this.modificarMedico(m);
+        clinica.insertarMedico(m);
+    }
     
+    private void modificarMedico(Medico m) {
+        this.modificarPersona(m);
+
+        String numColegiado = this.leeCadena("Num. Colegiado");
+        m.setNumColegiado(numColegiado);
+    }
+
     // ==============================================
     //  ENTRADAS DE TECLADO (ESPECIALES)
     // ==============================================
     private int leerTipoPaciente() {
         int tipo;
         do {
-            tipo = this.leeNum("Introduce tipo de paciente:\n" +
-                    "1. Asegurado\n2. Privado\n\n" +
-                    "> Selecciona la opción deseada");
+            tipo = this.leeNum("Introduce tipo de paciente:\n"
+                    + "1. Asegurado\n2. Privado\n\n"
+                    + "> Selecciona la opción deseada");
         } while (tipo != 1 && tipo != 2);
         return tipo;
     }
-    
+
     private Fecha leerFecha(String msg) {
         System.out.println(msg + ":");
-        int a,m,d;
+        int a, m, d;
         // Año
         do {
             a = leeNum("\tAño");
@@ -323,97 +354,44 @@ public class Ilc {
 
         return new Fecha(d, m, a);
     }
-    
+
     private String leerDNI() {
         String dni;
-        
+
         do {
             dni = this.leeCadena("DNI");
-        } while(dni.length() == 9);
-        
+        } while (dni.length() == 9);
+
         return dni;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
-    /**
-     * Lee un num. de teclado
-     *
-     * @param msg El mensaje a visualizap.
-     * @return El num., como entero
-     */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private int leeNum(String msg) {
         int toret = 0;
         boolean repite;
@@ -432,21 +410,6 @@ public class Ilc {
         return toret;
     }
 
-    /**
-     * Crea un nuevo paciente y lo inserta en la coleccion
-     *
-     * @param coleccion La coleccion en la que se inserta el paciente.
-     */
-    
-
-    private void insertaMedico(Clinica coleccion) throws Exception {
-        Medico p;
-        p = new Medico("", "", "");
-
-        modificaMedico(p);
-        coleccion.insertaMedico(p);
-    }
-
     private void insertaCita(Clinica coleccion) throws Exception {
         CitaMedica p;
         p = new CitaMedica(new Hora(0, 0), new Fecha(0, 0, 0), new Medico("", "", ""), new Privado("", "", "", "", new Fecha(0, 0, 0)));
@@ -460,20 +423,6 @@ public class Ilc {
     }
 
     
-
-    private void modificaMedico(Medico m) {
-        String info;
-        modificaPersona(m);
-
-        System.out.println("Num. Colegiado");
-        if (m.getNumColegiado().length() > 0) {
-            System.out.println("[" + m.getNumColegiado() + "]");
-        }
-
-        info = leeCadena(": ");
-        m.setNumColegiado(info);
-
-    }
 
     private void modificarCita(CitaMedica cm, Clinica coleccion) throws Exception {
         String info;
@@ -525,8 +474,6 @@ public class Ilc {
         return new Hora(h, m);
     }
 
-    
-
     private String leeCadena(String msg) {
         Scanner teclado = new Scanner(System.in);
         String toret = "";
@@ -535,19 +482,6 @@ public class Ilc {
             toret = teclado.nextLine().trim();
         } while (toret.equals(""));
         return toret;
-    }
-
-    /**
-     * Borra un paciente por su posicion en la colección.
-     *
-     * @param coleccion La coleccion en la que se elimina el paciente
-     */
-    private void eliminaPaciente(Clinica coleccion) throws Exception {
-        if (coleccion.getNumPacientes() > 0) {
-            coleccion.eliminaPaciente(leePosPaciente(coleccion));
-        } else {
-            System.out.println("La clinica no tiene pacientes.");
-        }
     }
 
     private void eliminaMedico(Clinica coleccion) throws Exception {
@@ -563,14 +497,6 @@ public class Ilc {
             coleccion.eliminaCita(leePosCitas(coleccion));
         } else {
             System.out.println("La clinica no tiene citas.");
-        }
-    }
-
-    private void modificaPaciente(Clinica coleccion) throws Exception {
-        if (coleccion.getNumPacientes() > 0) {
-            this.modificaPaciente(coleccion.getPaciente(leePosPaciente(coleccion)));
-        } else {
-            System.out.println("La coleccion no contiene pacientes.");
         }
     }
 
@@ -590,88 +516,6 @@ public class Ilc {
         }
     }
 
-    
-
-    
-
-    private void modificaPacientePrivado(Privado p) {
-        String info;
-        Scanner teclado = new Scanner(System.in);
-
-        //DNI
-        System.out.print("DNI");
-        if (p.getDni().length() > 0) {
-            System.out.println("[" + p.getDni() + "]");
-        }
-
-        info = leeCadena(": ");
-
-        p.setDni(info);
-    }
-
-    private void modificaPacienteAsegurado(Asegurado p) {
-        String info;
-        Scanner teclado = new Scanner(System.in);
-
-        System.out.println("Poliza");
-        if (p.getPoliza().length() > 0) {
-            System.out.println("[" + p.getPoliza() + "]");
-        }
-
-        info = leeCadena(": ");
-        p.setPoliza(info);
-
-        System.out.println("Compañia");
-        if (p.getCompañia().length() > 0) {
-            System.out.println("[" + p.getCompañia() + "]");
-        }
-
-        info = leeCadena(": ");
-        p.setCompañia(info);
-    }
-
-    /**
-     * Lee del teclado la posición de un paciente en la colección
-     *
-     * @param coleccion La colección de la que se obtiene el max.
-     * @return la posición del paciente, como entero.
-     */
-    private int leePosPaciente(Clinica coleccion) {
-        final int numPacientes = coleccion.getNumPacientes();
-        int toret;
-
-        do {
-            toret = leeNum("Introduzca posición del paciente (1..." + numPacientes + "): ");
-        } while (toret < 1
-                || toret > numPacientes);
-
-        return toret - 1;
-    }
-
-    private int leePosMedico(Clinica coleccion) {
-        final int numMedicos = coleccion.getNumMedicos();
-        int toret;
-
-        do {
-            toret = leeNum("Introduzca posición del medico (1..." + numMedicos + "): ");
-        } while (toret < 1
-                || toret > numMedicos);
-
-        return toret - 1;
-    }
-
-    private int leePosCitas(Clinica coleccion) {
-        final int numCitas = coleccion.getNumCitas();
-        int toret;
-
-        do {
-            toret = leeNum("Introduzca posición de la cita (1..." + numCitas + "): ");
-        } while (toret < 1
-                || toret > numCitas);
-
-        return toret - 1;
-    }
-
     /**
      * Lee un caracter del teclado
      *
@@ -683,41 +527,5 @@ public class Ilc {
 
         System.out.print(men);
         return (teclado.nextLine().trim().charAt(0));
-    }
-
-    /**
-     * Visualiza los pacentes almacenados en la coleccion por la salida std.
-     *
-     * @param coleccion El objeto Clinica del que visualizar sus pacientes.
-     */
-    // Este método no se invoca al hacer el segundo ejercicio del proyecto
-    /*private void visualiza(Clinica coleccion)
-    {
-        final int numPacientes = coleccion.getNumPacientes();
-
-        if ( numPacientes > 0 ) {
-            for (int i = 0; i < numPacientes; i++) {
-                System.out.print( ( i + 1 ) + ". " );
-                System.out.println( coleccion.get( i ).toString() );
-            }
-        } else {
-            System.out.println( "No hay pacientes." );
-        }
-
-    }*/
-
-    
-
-    public void listarPorTipo(Clinica coleccion) {
-        char info;
-
-        Scanner entrada = new Scanner(System.in);
-
-        do {
-            System.out.print("Indica el tipo de pacientes a listar: (Privado (P) o Asegurados (A)): ");
-            info = entrada.nextLine().trim().toUpperCase().charAt(0);
-        } while ((info != 'P') && (info != 'A'));
-
-        coleccion.listarPacientes(info);
     }
 }
