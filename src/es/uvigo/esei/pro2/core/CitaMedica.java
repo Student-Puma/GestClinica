@@ -9,7 +9,12 @@ public class CitaMedica {
     private Hora hora;
     private Fecha fecha;
 
-    public CitaMedica(int dia, int mes, int anho, int hora, int minutos) {
+    public CitaMedica(Hora hora, Fecha fecha) {
+        this.hora = hora;
+        this.fecha = fecha;
+    }
+    
+    public CitaMedica(int hora, int minutos, int dia, int mes, int anho) {
         this.hora = new Hora(hora, minutos);
         this.fecha = new Fecha(dia, mes, anho);
     }

@@ -227,7 +227,7 @@ public class Clinica {
 
     public String toStringMedicos() {
         StringBuilder sb = new StringBuilder();
-        if (this.numMedicos < 0) {
+        if (this.numMedicos == 0) {
             sb.append("No hay medicos");
         } else {
             for (int i = 0; i < this.numMedicos; i++) {
@@ -257,8 +257,8 @@ public class Clinica {
         }
         this.citasMedicas[this.numCitasMedicas] = cm;
         // Añadimos la relacion Cita - Medico - Paciente
-        this.relacionCitaMedicoPaciente[this.numCitasMedicas++][0] = cm;    // Cita
-        this.relacionCitaMedicoPaciente[this.numCitasMedicas++][1] = m;     // Medico
+        this.relacionCitaMedicoPaciente[this.numCitasMedicas][0] = cm;    // Cita
+        this.relacionCitaMedicoPaciente[this.numCitasMedicas][1] = m;     // Medico
         this.relacionCitaMedicoPaciente[this.numCitasMedicas++][2] = p;     // Paciente
     }
 
@@ -294,16 +294,16 @@ public class Clinica {
 
         sb.append(this.relacionCitaMedicoPaciente[index][0])
                 .append(" ; ")
-                .append(this.relacionCitaMedicoPaciente[index][1])
+                .append(((Medico) this.relacionCitaMedicoPaciente[index][1]).getNumColegiado())
                 .append(" ; ")
-                .append(this.relacionCitaMedicoPaciente[index][2]);
+                .append(((Paciente) this.relacionCitaMedicoPaciente[index][2]).getNumHistorial());
 
         return sb.toString();
     }
 
     public String toStringCitasMedicas() {
         StringBuilder sb = new StringBuilder();
-        if (this.numCitasMedicas < 0) {
+        if (this.numCitasMedicas == 0) {
             sb.append("No hay citas médicas");
         } else {
             for (int i = 0; i < this.numCitasMedicas; i++) {
@@ -311,9 +311,9 @@ public class Clinica {
                         .append(". ")
                         .append(this.relacionCitaMedicoPaciente[i][0])
                         .append(" ; ")
-                        .append(this.relacionCitaMedicoPaciente[i][1])
+                        .append(((Medico) this.relacionCitaMedicoPaciente[i][1]).getNumColegiado())
                         .append(" ; ")
-                        .append(this.relacionCitaMedicoPaciente[i][2])
+                        .append(((Paciente) this.relacionCitaMedicoPaciente[i][2]).getNumHistorial())
                         .append('\n');
             }
         }
