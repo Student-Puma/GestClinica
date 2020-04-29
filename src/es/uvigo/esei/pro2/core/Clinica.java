@@ -88,7 +88,7 @@ public class Clinica {
         return this.pacientes[i];
     }
 
-    public boolean existeHistorial(String numHistorial) {
+    public boolean existeNumHistorial(String numHistorial) {
         int i = 0;
         while (i < this.numPacientes && !this.pacientes[i].getNumHistorial().equals(numHistorial)) {
             i++;
@@ -198,88 +198,50 @@ public class Clinica {
         }
         return this.medicos[i];
     }
+    
+    public boolean existeNumColegiado(String numColegiado) {
+        int i = 0;
+        while (i < this.numMedicos && !this.medicos[i].getNumColegiado().equals(numColegiado)) {
+            i++;
+        }
+        return i != this.numMedicos;
+    }
+    
+    public void eliminarMedico(int index) throws ClinicaException {
+        if (index < 0 || index >= this.medicos.length) {
+            throw new ClinicaException("Medico :: eliminar() : Error en la posición (" + (index + 1) + "/" + this.medicos.length + ")");
+        }
+        if (this.tieneMedicoCitas(this.getMedico(index))) {
+            throw new ClinicaException("Medico :: eliminar() : El medico tiene citas pendientes");
+        }
+        this.medicos[index] = this.medicos[--this.numMedicos];
+    }
+    
+    private boolean tieneMedicoCitas(Medico m) {
+        int i = 0;
+        while (i < this.numCitas && !this.relacionCitaMedicoPaciente[i][1].equals(m)) {
+            i++;
+        }
+        return i != this.numCitas;
+    }
+    
+    public String toStringMedicos() {
+        StringBuilder sb = new StringBuilder();
+        if (this.numMedicos < 0) {
+            sb.append("No hay medicos");
+        } else {
+            for (int i = 0; i < this.numMedicos; i++) {
+                sb.append(i + 1)
+                        .append(". ")
+                        .append(this.medicos[i])
+                        .append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }
 
 /*
-//MEDICOS
-
-    public Medico getMedico(String numColegiado) throws Exception {
-        int i = 0;
-        while (i < this.numMedicos && !medicos[i].getNumColegiado().equals(numColegiado)) {
-            i++;
-        }
-        if (i == this.numMedicos) {
-            throw new Exception("getMedico(): El colegiado buscado no se corresponde con un médico");
-        }
-        return medicos[i];
-    }
-
-    public void insertaMedico(Medico p) throws Exception {
-        final int maxMedicos = getMaxMedicos();
-
-        if (getNumPacientes() >= maxMedicos) {
-            throw new Exception("inserta(): sobrepasa max.: " + getMaxMedicos());
-        }
-
-        medicos[numMedicos] = p;
-        ++numMedicos;
-    }
-
-    public void eliminaMedico(int pos) throws Exception {
-        if (pos >= getNumMedicos()) {
-            throw new Exception("get() : sobrepasa la pos: " + (pos + 1) + " / " + getMaxMedicos());
-        }
-        if (tieneMedicoCitas(getMedico(pos))) {
-            throw new Exception("elimina(): no se puede eliminar el medico, tiene citas");
-        }
-        medicos[pos] = medicos[--numMedicos];
-    }
-
-    private boolean tieneMedicoCitas(Medico p) {
-        int i = 0;
-        while (i < this.getNumCitas() && !citamedica[i].getMedico().equals(p)) {
-            i++;
-        }
-        return (i != this.getNumCitas());
-    }
-
-    public boolean existeColegiado(String numColegiado) {
-        int i = 0;
-        while (i < this.numMedicos && !medicos[i].getNumColegiado().equals(numColegiado)) {
-            i++;
-        }
-        return (i != this.numMedicos);
-    }
-
-    public String toStringMedico() {
-        StringBuilder toret;
-        final int numMedicos = getNumMedicos();
-
-        toret = new StringBuilder();
-        toret.append("Clinica: ").append(nombreClinica).append("\n");
-        toret.append("Medicos: \n");
-        if (numMedicos > 0) {
-            for (int i = 0; i < numMedicos; i++) {
-                toret.append((i + 1) + ". ");
-                toret.append(medicos[i].toString() + "\n");
-            }
-        } else {
-            toret.append("No hay medicos.");
-        }
-
-        return toret.toString();
-
-    }
-
-    public void listarMedicos(char c) {
-        int numM = getNumMedicos();
-        for (int i = 0; i < numM; i++) {
-
-            System.out.println(medicos[i].toString());
-
-        }
-    }
-
     //CITAS
     public CitaMedica getCitaMedica(int pos) throws Exception {
         if (pos >= getNumPacientes()) {
